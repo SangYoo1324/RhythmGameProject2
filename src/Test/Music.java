@@ -13,6 +13,8 @@ private File file;
 private FileInputStream fis;
 private BufferedInputStream bis;
 
+
+
 public Music(String name, boolean isLoop) {
 	try {
 		this.isLoop = isLoop;
