@@ -2,6 +2,7 @@ package Test;
 
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -55,11 +56,11 @@ public class dynamicBeat extends JFrame {
 	private ImageIcon backButtonEnteredImage = new ImageIcon(Main.class.getResource("/Images/ArrowLeft.png"));
 	private ImageIcon backButtonBasicImage = new ImageIcon(Main.class.getResource("/Images/ArrowLeft.png"));
 	private JButton backButton = new JButton(backButtonBasicImage);
-	private Image gameInfoImage = new ImageIcon(Main.class.getResource("/Images/gameInfo.png")).getImage(); //draw with g.drawImage
-	private Image judgementLineImage = new ImageIcon(Main.class.getResource("/Images/judgementLine.png")).getImage(); //draw with g.drawImage
-	private Image noteRouteImage =  new ImageIcon(Main.class.getResource("/Images/noteRoute.png")).getImage();
-	private Image noteRouteLineImage =  new ImageIcon(Main.class.getResource("/Images/noteRouteLine.png")).getImage();
-	private Image noteBasicImage =  new ImageIcon(Main.class.getResource("/Images/noteBasic.png")).getImage();
+	//private Image gameInfoImage = new ImageIcon(Main.class.getResource("/Images/gameInfo.png")).getImage(); //draw with g.drawImage
+	//private Image judgementLineImage = new ImageIcon(Main.class.getResource("/Images/judgementLine.png")).getImage(); //draw with g.drawImage
+	//private Image noteRouteImage =  new ImageIcon(Main.class.getResource("/Images/noteRoute.png")).getImage();
+	//private Image noteRouteLineImage =  new ImageIcon(Main.class.getResource("/Images/noteRouteLine.png")).getImage();
+	//private Image noteBasicImage =  new ImageIcon(Main.class.getResource("/Images/noteBasic.png")).getImage();
 	
 	//easy hard buttons
 	private ImageIcon easyButtonEnteredImage = new ImageIcon(Main.class.getResource("/Images/easyButtonEntered.png"));
@@ -78,8 +79,14 @@ public class dynamicBeat extends JFrame {
 	
 	ArrayList<Track> trackList = new ArrayList<Track>();
 	
+	public static Game game;
 	
 dynamicBeat(){
+	trackList.add(new Track("M2U_QueenBeeText.png", "QueenBeesOpening.png", "mainPage.jpg", "M2U - Queen Bee.mp3", "M2U - Queen Bee.mp3","M2u-QueenBee"));
+	trackList.add(new Track("farout_truestLiesText.png", "Truest_Lie.png", "mainPage.jpg", "Far Out - Truest Lies.mp3", "Far Out - Truest Lies.mp3","Far Out - Truest Lies"));
+	trackList.add(new Track("FelixCartal_LoveMeText.png", "Love me.png", "mainPage.jpg", "Felix Cartal  LIGHTS - Love Me.mp3", "Felix Cartal  LIGHTS - Love Me.mp3", "Felix Cartal  LIGHTS - Love Me"));
+	
+	
 	setUndecorated(true);
 	setTitle("DynamicBeat");
 	setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
@@ -89,11 +96,14 @@ dynamicBeat(){
 	setVisible(true);
 	setBackground(new Color(0,0,0,0));
 	setLayout(null);
+	setFocusable(true);//Keyboard focus on main Frame
+	
+	//Adding KeyListener for gameScreen
+	addKeyListener(new KeyListener());
+	//
+	//addKeyListener(new KeyAdapter() {});<<-- do this if you don't want to create new Class for KeyListener
 	
 	//track database
-	trackList.add(new Track("M2U_QueenBeeText.png", "QueenBeesOpening.png", "mainPage.jpg", "M2U - Queen Bee.mp3", "M2U - Queen Bee.mp3"));
-	trackList.add(new Track("farout_truestLiesText.png", "Truest_Lie.png", "mainPage.jpg", "Far Out - Truest Lies.mp3", "Far Out - Truest Lies.mp3"));
-	trackList.add(new Track("FelixCartal_LoveMeText.png", "Love me.png", "mainPage.jpg", "Felix Cartal  LIGHTS - Love Me.mp3", "Felix Cartal  LIGHTS - Love Me.mp3"));
 	
 	
 	introMusic.start();
@@ -362,6 +372,8 @@ public void screenDraw(Graphics2D g) {
 		g.drawImage(titleImage,340,70,null );
 	}
 	if(isGameScreen) {
+		game.screenDraw(g);
+		/*
 		g.drawImage(noteRouteImage, 228,30,null);
 		g.drawImage(noteRouteImage, 332,30,null);
 		g.drawImage(noteRouteImage, 436,30,null);
@@ -404,6 +416,7 @@ public void screenDraw(Graphics2D g) {
 		g.drawString("J", 784, 609);
 		g.drawString("K", 889, 609);
 		g.drawString("L", 993, 609);
+		*/
 	}
 	paintComponents(g);
 	this.repaint();
@@ -448,6 +461,9 @@ public void gameStart(int nowSelected, String difficulty) {
 	hardButton.setVisible(false);
 	backButton.setVisible(true);
 	background = new ImageIcon(Main.class.getResource("/Images/"+trackList.get(nowSelected).getGameImage())).getImage();
+	game = new Game(trackList.get(nowSelected).getTitleName(),difficulty, trackList.get(nowSelected).getGameMusic());
+	game.start();
+	setFocusable(true);
 	
 }
 public void backMain() {
@@ -460,6 +476,7 @@ public void backMain() {
 	background = new ImageIcon(Main.class.getResource("/Images/mainBackground.jpg")).getImage();
 	selectedTrack(nowSelected);
 	isGameScreen = false;
+	game.close();
 }
 public void enterMain() {
 	startButton.setVisible(false);
